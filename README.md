@@ -1,4 +1,5 @@
 # Ryhm-1
+Fotosid leiab: (http://minitorn.tlu.ee/~rinde/media/fotod/TLU_600x400/)
 
 ### Ühendus Greeny'sse
 
