@@ -1,0 +1,33 @@
+Kodus tuleb tunnis valmis saadud veebilehte muuta nii:
+1) sisselogimisel näidataks pealehel pealkirjas (h1) sisseloginud kasutaja ees ja perekonnanime.
+2) Looge main.php koopiana uus leht usersInfo.php. Kustutage sealt kogu pildi osa (juhusliku pildi valik ja html img-element. Pealehele (main.php) lisage link uuele lehele. Uuele lehele lisage link pealehele liikumiseks.
+Tehke nii, et lehel usersInfo.php näidataks tabelina kõiki registreeritud kasutajaid. Tabelis peab olema näha eesnimi, perekonnanimi, e-posti aadress, sünnipäev ja sugu (mees või naine, mitte number).
+
+Andmebaasist kõikide kirjete (ehk siis kasutajate) küsimiseks on vaja luua käsk, näiteks:
+$stmt = $mysqli->prepare("SELECT id, firstname, lastname, email FROM vpusers");
+Teie muidugi vaadake, et kõik vajalikud väljad oleksid loetletud.
+
+Kõigi kasutajate kuvamisel tuleb iga kasutaja kohta luua tabeli rida. Selleks tuleb lugeda tabelist vajalikud andmed ning seejärel kasutada while tsüklit, mida täidetakse kuni veel on mõni kirje vaadata:
+        while($stmt->fetc()){
+          //siia read, mis loovad iga kasutaja kohta tabeli rea
+        }
+        
+Tabel ise näeb html-is välja näiteks selline (siin on vähem andmeid ia kasutaja kohta praegu):
+<table border="1" style="border: 1px solid black; border-collapse: collapse">
+	<tr>
+		<th>Eesnimi</th><th>perekonnanimi</th><th>e-posti aadress</th>
+	</tr>
+	<tr>
+		<td>Juku</td><td>Porgand</td><td>juku.porgand@aed.ee</td>
+	</tr>
+	<tr>
+		<td>Mari</td><td>Karus</td><td>mari.karus@aed.ee</td>
+	</tr>
+	</table>
+  
+  Siin algusmärgendis paar kujundusasja, et jooned oleksid ja normaalsed ka.
+  Iga rida on element <tr>
+  Esimene rida peaks olema päis. Seal iga lahter elemendina <th>
+  Ülejäänud read peaksid olema tavalised tabeli lahtrid ehk elemendid <td>
+  
+  
