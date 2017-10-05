@@ -1,6 +1,13 @@
 <?php
 	require("../../../vpconfig.php");
+	require("functions.php");
 	//echo $serverHost;
+	
+	//kui on sisseloginud, siis pealehele
+	if(isset($_SESSION["userId"])){
+		header("Location: main.php");
+		exit();
+	}
 
 	$signupFirstName = "";
 	$signupFamilyName = "";
@@ -12,6 +19,7 @@
 	$signupBirthDate = "";
 	
 	$loginEmail = "";
+	$notice = "";
 
 	$signupFirstNameError = "";
 	$signupFamilyNameError = "";
@@ -22,6 +30,9 @@
 	
 	$loginEmailError ="";
 	
+	//kas klõpsati sisselogimise nuppu
+	if(isset($_POST["signinButton"])){
+	
 	//kas on kasutajanimi sisestatud
 	if (isset ($_POST["loginEmail"])){
 		if (empty ($_POST["loginEmail"])){
@@ -31,12 +42,22 @@
 		}
 	}
 	
+	if(!empty($loginEmail) and !empty($_POST["loginPassword"])){
+		//echo "Logime sisse!";
+		$notice = signIn($loginEmail, $_POST["loginPassword"]);
+	}
+	
+	}//kas sisselogimine lõppeb
+	
+	//kas luuakse uut kasutajat, vajutati nuppu
+	if(isset($_POST["signupButton"])){
+	
 	//kontrollime, kas kirjutati eesnimi
 	if (isset ($_POST["signupFirstName"])){
 		if (empty($_POST["signupFirstName"])){
 			$signupFirstNameError ="NB! Väli on kohustuslik!";
 		} else {
-			$signupFirstName = $_POST["signupFirstName"];
+			$signupFirstName = test_input($_POST["signupFirstName"]);
 		}
 	}
 	
@@ -45,7 +66,7 @@
 		if (empty($_POST["signupFamilyName"])){
 			$signupFamilyNameError ="NB! Väli on kohustuslik!";
 		} else {
-			$signupFamilyName = $_POST["signupFamilyName"];
+			$signupFamilyName = test_input($_POST["signupFamilyName"]);
 		}
 	}
 	
@@ -88,7 +109,10 @@
 		if (empty ($_POST["signupEmail"])){
 			$signupEmailError ="NB! Väli on kohustuslik!";
 		} else {
-			$signupEmail = $_POST["signupEmail"];
+			$signupEmail = test_input($_POST["signupEmail"]);
+						
+			$signupEmail = filter_var($signupEmail, FILTER_SANITIZE_EMAIL);
+			$signupEmail = filter_var($signupEmail, FILTER_VALIDATE_EMAIL);
 		}
 	}
 	
@@ -115,26 +139,12 @@
 		//krüpteerin parooli
 		$signupPassword = hash("sha512", $_POST["signupPassword"]);
 		//echo "\n Parooli " .$_POST["signupPassword"] ." räsi on: " .$signupPassword;
-		//loome andmebaasiühenduse
-		$database = "if17_rinde";
-		$mysqli = new mysqli($serverHost, $serverUsername, $serverPassword, $database);
-		//valmistame ette käsu andmebaasiserverile
-		$stmt = $mysqli->prepare("INSERT INTO vp1users (firstname, lastname, birthday, gender, email, password) VALUES (?, ?, ?, ?, ?, ?)");
-		echo $mysqli->error;
-		//s - string
-		//i - integer
-		//d - decimal
-		$stmt->bind_param("sssiss", $signupFirstName, $signupFamilyName, $signupBirthDate, $gender, $signupEmail, $signupPassword);
-		//$stmt->execute();
-		if ($stmt->execute()){
-			echo "\n Õnnestus!";
-		} else {
-			echo "\n Tekkis viga : " .$stmt->error;
-		}
-		$stmt->close();
-		$mysqli->close();
+		
+		signUp($signupFirstName, $signupFamilyName, $signupBirthDate, $gender, $signupEmail, $signupPassword);
+		
 	}
 	
+	}//uue kasutaja loomise lõpp
 	
 	//Tekitame kuupäeva valiku
 	$signupDaySelectHTML = "";
@@ -179,7 +189,7 @@
 	}
 	$signupYearSelectHTML.= "</select> \n";
 	
-	
+
 ?>
 <!DOCTYPE html>
 <html lang="et">
@@ -191,19 +201,19 @@
 	<h1>Logi sisse!</h1>
 	<p>Siin harjutame sisselogimise funktsionaalsust.</p>
 	
-	<form method="POST">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 		<label>Kasutajanimi (E-post): </label>
 		<input name="loginEmail" type="email" value="<?php echo $loginEmail; ?>"><span><?php echo $loginEmailError; ?></span>
 		<br><br>
 		<input name="loginPassword" placeholder="Salasõna" type="password"><span></span>
 		<br><br>
-		<input type="submit" value="Logi sisse">
+		<input name="signinButton" type="submit" value="Logi sisse"><span><?php echo $notice; ?></span>
 	</form>
 	
 	<h1>Loo kasutaja</h1>
 	<p>Kui pole veel kasutajat....</p>
 	
-	<form method="POST">
+	<form method="POST" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
 		<label>Eesnimi </label>
 		<input name="signupFirstName" type="text" value="<?php echo $signupFirstName; ?>">
 		<span><?php echo $signupFirstNameError; ?></span>
@@ -234,7 +244,7 @@
 		<br><br>
 
 		
-		<input type="submit" value="Loo kasutaja">
+		<input name="signupButton" type="submit" value="Loo kasutaja">
 	</form>
 		
 </body>
