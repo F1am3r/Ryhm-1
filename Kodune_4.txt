@@ -8,7 +8,7 @@ $stmt = $mysqli->prepare("SELECT id, firstname, lastname, email FROM vpusers");
 Teie muidugi vaadake, et kõik vajalikud väljad oleksid loetletud.
 
 Kõigi kasutajate kuvamisel tuleb iga kasutaja kohta luua tabeli rida. Selleks tuleb lugeda tabelist vajalikud andmed ning seejärel kasutada while tsüklit, mida täidetakse kuni veel on mõni kirje vaadata:
-        while($stmt->fetc()){
+        while($stmt->fetch()){
           //siia read, mis loovad iga kasutaja kohta tabeli rea
         }
         
