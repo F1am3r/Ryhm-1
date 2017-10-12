@@ -1,6 +1,5 @@
 <?php
 	$database = "if17_rinde";
-	require("../../../vpconfig.php");
 	//alustame sessiooni
 	session_start();
 	

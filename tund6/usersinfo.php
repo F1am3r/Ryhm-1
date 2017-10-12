@@ -14,6 +14,7 @@
 		exit();
 	}
 	
+	//See on siin ainult minu tehtud kodutöö jaoks!!!
 	require("../../usersinfotable.php");
 ?>
 
@@ -30,7 +31,10 @@
 	<p><a href="main.php">Pealeht</a></p>
 	<hr>
 	<h2>Kõik süsteemi kasutajad</h2>
-	<?php echo createUsersTable(); ?>
+	<?php
+		//see siin on ainult minu tehtud kodutöö jaoks!!!
+		echo createUsersTable();
+	?>
 	<hr>
 	
 </body>
